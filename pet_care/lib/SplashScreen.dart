@@ -147,6 +147,35 @@ class SplashScreenState extends State<SplashScreen> with TickerProviderStateMixi
       });
 
       try {
+        // Check if user document exists in Firestore
+        DocumentSnapshot userDocCheck = await FirebaseFirestore.instance
+            .collection('UserData')
+            .doc(userEmail)
+            .get();
+        
+        // If user document doesn't exist, create it
+        if (!userDocCheck.exists) {
+          User? currentUser = FirebaseAuth.instance.currentUser;
+          if (currentUser != null) {
+            print('Creating missing user document for: $userEmail');
+            await FirebaseFirestore.instance
+                .collection('UserData')
+                .doc(userEmail)
+                .set({
+              'Name': currentUser.displayName ?? 'User',
+              'Email': userEmail,
+              'role': 'user', // Default role
+              'isVerified': currentUser.emailVerified,
+              'Pic': currentUser.photoURL ?? 'assets/images/petPic.png',
+              'LAT': 31.5607552,
+              'LONG': 74.378948,
+              'City': '',
+              'DateOfBirth': '',
+            });
+            print('User document created successfully');
+          }
+        }
+
         final userData = await DataBase.readData("UserData", userEmail);
         
         final String userId = userData['uid'] ?? userData['Email'] ?? '';

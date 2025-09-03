@@ -1,0 +1,6 @@
+framework module Runner {
+  umbrella header "GeneratedPluginRegistrant.h"
+  
+  export *
+  module * { export * }
+}

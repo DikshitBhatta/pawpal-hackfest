@@ -1,7 +1,7 @@
-# Global iOS platform
+# Uncomment this line to define a global platform for your project
 platform :ios, '15.6'
 
-# Speed up Flutter builds (no Cocoapods analytics)
+# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -28,12 +28,9 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  # ✅ Use static frameworks to avoid double-embed conflicts with gRPC/Firebase
   use_frameworks! :linkage => :static
-  use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-
   target 'RunnerTests' do
     inherit! :search_paths
   end
@@ -43,11 +40,18 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.6'
-      
+      # Keep Swift version consistent
+      config.build_settings['SWIFT_VERSION'] = '5.9'
+      # Force BUILD_LIBRARY_FOR_DISTRIBUTION to NO to avoid bridging header conflicts
       config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
-      config.build_settings['SWIFT_EMIT_MODULE_INTERFACE'] = 'NO'
-  config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      # Remove any bridging header settings from pods
+      config.build_settings.delete('SWIFT_OBJC_BRIDGING_HEADER')
+      # Disable module interface issues
+      config.build_settings['SWIFT_COMPILATION_MODE'] = 'wholemodule'
+      config.build_settings['DEFINES_MODULE'] = 'YES'
+      config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+      # Force usage of framework interfaces
+      config.build_settings['SWIFT_DISABLE_SAFETY_CHECKS'] = 'NO'
     end
   end
 end

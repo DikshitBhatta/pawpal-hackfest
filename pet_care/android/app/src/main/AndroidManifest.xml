@@ -6,7 +6,7 @@
         tools:node="remove" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application
-        android:label="Pettify"
+    android:label="Vitapaw"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

@@ -1,19 +1,38 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pet_care/services/subscription_order_service.dart';
 
 class SubscriptionAutomationService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
   static Timer? _automationTimer;
   static bool _isRunning = false;
+  static StreamSubscription<User?>? _authStateSubscription;
 
   /// Start the automation service
-  /// This should be called when the app starts
+  /// This should be called when the app starts and user is authenticated
   static void startAutomationService() {
     if (_isRunning) return;
     
+    // Listen to auth state changes
+    _authStateSubscription = _auth.authStateChanges().listen((User? user) {
+      if (user != null) {
+        // User is authenticated, start automation
+        _startAutomation();
+      } else {
+        // User is not authenticated, stop automation
+        _stopAutomation();
+      }
+    });
+  }
+
+  /// Internal method to start automation
+  static void _startAutomation() {
+    if (_isRunning) return;
+    
     _isRunning = true;
-    print('Starting Subscription Automation Service...');
+    print('Starting Subscription Automation Service for authenticated user...');
     
     // Run automation checks every 30 minutes
     _automationTimer = Timer.periodic(Duration(minutes: 30), (timer) {
@@ -24,8 +43,8 @@ class SubscriptionAutomationService {
     _runAutomationTasks();
   }
 
-  /// Stop the automation service
-  static void stopAutomationService() {
+  /// Internal method to stop automation
+  static void _stopAutomation() {
     if (_automationTimer != null) {
       _automationTimer!.cancel();
       _automationTimer = null;
@@ -34,10 +53,24 @@ class SubscriptionAutomationService {
     print('Subscription Automation Service stopped');
   }
 
+  /// Stop the automation service
+  static void stopAutomationService() {
+    _authStateSubscription?.cancel();
+    _authStateSubscription = null;
+    _stopAutomation();
+  }
+
   /// Run all automation tasks
   static Future<void> _runAutomationTasks() async {
     try {
-      print('Running subscription automation tasks...');
+      // Check if user is still authenticated
+      User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        print('No authenticated user, skipping automation tasks');
+        return;
+      }
+
+      print('Running subscription automation tasks for user: ${currentUser.email}...');
       
       // 1. Update orders to critical priority
       await SubscriptionOrderService.updateOrdersToCritical();
@@ -194,6 +227,16 @@ class SubscriptionAutomationService {
   /// Manual trigger for automation tasks (useful for testing)
   static Future<Map<String, dynamic>> runManualAutomation() async {
     try {
+      // Check if user is authenticated
+      User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        return {
+          'success': false,
+          'error': 'No authenticated user',
+          'message': 'User must be authenticated to run automation'
+        };
+      }
+
       await _runAutomationTasks();
       return {
         'success': true,

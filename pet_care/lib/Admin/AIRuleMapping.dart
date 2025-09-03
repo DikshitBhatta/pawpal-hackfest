@@ -47,302 +47,317 @@ class _AIRuleMappingState extends State<AIRuleMapping> {
         iconTheme: IconThemeData(color: ColorsScheme.primaryIconColor),
         elevation: 0,
       ),
-      body: SafeArea(
-        bottom: true,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + MediaQuery.of(context).viewPadding.bottom),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: ColorsScheme.secondaryBackgroundColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-              // Create AI Rule Form Section
-                Text(
-                  'Create AI Rule',
-                  style: TextStyle(
-                    color: ColorsScheme.primaryTextColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Create AI Rule Form - Fixed height
+            Expanded(
+              flex: 3,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: ColorsScheme.secondaryBackgroundColor,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(_ruleNameController, 'Rule Name'),
-                const SizedBox(height: 12),
-                _buildTextField(_descriptionController, 'Description', maxLines: 2),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(child: _buildDropdown('Health Condition', _selectedCondition, _conditions, (value) {
-                      setState(() {
-                        _selectedCondition = value!;
-                      });
-                    })),
-                    const SizedBox(width: 12),
-                    Expanded(child: _buildTextField(_priorityController, 'Priority (1-10)')),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(child: _buildDropdown('Dog Size', _selectedDogSize, _dogSizes, (value) {
-                      setState(() {
-                        _selectedDogSize = value!;
-                      });
-                    })),
-                    const SizedBox(width: 12),
-                    Expanded(child: _buildDropdown('Activity Level', _selectedActivityLevel, _activityLevels, (value) {
-                      setState(() {
-                        _selectedActivityLevel = value!;
-                      });
-                    })),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Meal Recommendations (${_selectedRecommendations.length})',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Create AI Rule',
                         style: TextStyle(
                           color: ColorsScheme.primaryTextColor,
-                          fontSize: 16,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    ElevatedButton(
-                      onPressed: _showMealPresetPicker,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorsScheme.primaryIconColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                      const SizedBox(height: 16),
+                      _buildTextField(_ruleNameController, 'Rule Name'),
+                      const SizedBox(height: 12),
+                      _buildTextField(_descriptionController, 'Description', maxLines: 2),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(child: _buildDropdown('Health Condition', _selectedCondition, _conditions, (value) {
+                            setState(() {
+                              _selectedCondition = value!;
+                            });
+                          })),
+                          const SizedBox(width: 12),
+                          Expanded(child: _buildTextField(_priorityController, 'Priority (1-10)')),
+                        ],
                       ),
-                      child: const Text(
-                        'Add Meal',
-                        style: TextStyle(color: Colors.white),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(child: _buildDropdown('Dog Size', _selectedDogSize, _dogSizes, (value) {
+                            setState(() {
+                              _selectedDogSize = value!;
+                            });
+                          })),
+                          const SizedBox(width: 12),
+                          Expanded(child: _buildDropdown('Activity Level', _selectedActivityLevel, _activityLevels, (value) {
+                            setState(() {
+                              _selectedActivityLevel = value!;
+                            });
+                          })),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                _buildSelectedRecommendations(),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _createAIRule,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorsScheme.primaryIconColor,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'Create AI Rule',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              
-              // Existing AI Rules Section - Now below the Create button
-              const SizedBox(height: 32),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'AI Rules',
-                          style: TextStyle(
-                            color: ColorsScheme.primaryTextColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Meal Recommendations (${_selectedRecommendations.length})',
+                              style: TextStyle(
+                                color: ColorsScheme.primaryTextColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
+                          ElevatedButton(
+                            onPressed: _showMealPresetPicker,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorsScheme.primaryIconColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Add Meal',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
-                      TextButton.icon(
-                        onPressed: _testAIRecommendation,
-                        icon: Icon(Icons.psychology, color: ColorsScheme.primaryIconColor),
-                        label: Text(
-                          'Test AI',
-                          style: TextStyle(color: ColorsScheme.primaryIconColor),
+                      const SizedBox(height: 8),
+                      _buildSelectedRecommendations(),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _createAIRule,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorsScheme.primaryIconColor,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Create AI Rule',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-              StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('ai_rules')
-                          .orderBy('priority', descending: true)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                        }
-                        
-                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // Existing AI Rules - Fixed height to prevent overflow
+            Expanded(
+              flex: 2,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: ColorsScheme.secondaryBackgroundColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
                             child: Text(
-                              'No AI rules created yet',
+                              'AI Rules',
                               style: TextStyle(
-                                color: ColorsScheme.secondaryTextColor,
-                                fontSize: 16,
+                                color: ColorsScheme.primaryTextColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
+                          ),
+                          TextButton.icon(
+                            onPressed: _testAIRecommendation,
+                            icon: Icon(Icons.psychology, color: ColorsScheme.primaryIconColor),
+                            label: Text(
+                              'Test AI',
+                              style: TextStyle(color: ColorsScheme.primaryIconColor),
+                            ),
+                          ),
+                        ],
                       ),
-                          );
-                        }
-                        
-                        return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            final doc = snapshot.data!.docs[index];
-                            final data = doc.data() as Map<String, dynamic>;
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('ai_rules')
+                              .orderBy('priority', descending: true)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
                             
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              decoration: BoxDecoration(
-                          color: ColorsScheme.primaryBackgroundColor,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: ExpansionTile(
-                                title: Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: ColorsScheme.primaryIconColor,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        'P${data['priority'] ?? 0}',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        data['ruleName'] ?? 'Unknown Rule',
-                                        style: TextStyle(
-                                          color: ColorsScheme.primaryTextColor,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Text(
-                                  '${data['condition']} • ${data['dogSize']} • ${data['activityLevel']} Activity',
+                            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                              return Center(
+                                child: Text(
+                                  'No AI rules created yet',
                                   style: TextStyle(
                                     color: ColorsScheme.secondaryTextColor,
+                                    fontSize: 16,
                                   ),
                                 ),
-                                iconColor: ColorsScheme.primaryIconColor,
-                                collapsedIconColor: ColorsScheme.primaryIconColor,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                              );
+                            }
+                            
+                            return ListView.builder(
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                final doc = snapshot.data!.docs[index];
+                                final data = doc.data() as Map<String, dynamic>;
+                                
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  decoration: BoxDecoration(
+                                    color: ColorsScheme.primaryBackgroundColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: ExpansionTile(
+                                    title: Row(
                                       children: [
-                                        Text(
-                                          'Description:',
-                                          style: TextStyle(
-                                            color: ColorsScheme.primaryTextColor,
-                                            fontWeight: FontWeight.bold,
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: ColorsScheme.primaryIconColor,
+                                            borderRadius: BorderRadius.circular(12),
                                           ),
-                                        ),
-                                        Text(
-                                          data['description'] ?? 'No description',
-                                          style: TextStyle(
-                                            color: ColorsScheme.secondaryTextColor,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          'Recommended Meals:',
-                                          style: TextStyle(
-                                            color: ColorsScheme.primaryTextColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        ...((data['recommendations'] as List?) ?? []).map((meal) {
-                                          return Text(
-                                            '• $meal',
-                                            style: TextStyle(
-                                              color: ColorsScheme.secondaryTextColor,
+                                          child: Text(
+                                            'P${data['priority'] ?? 0}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                          );
-                                        }).toList(),
-                                        const SizedBox(height: 16),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            data['ruleName'] ?? 'Unknown Rule',
+                                            style: TextStyle(
+                                              color: ColorsScheme.primaryTextColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    subtitle: Text(
+                                      '${data['condition']} • ${data['dogSize']} • ${data['activityLevel']} Activity',
+                                      style: TextStyle(
+                                        color: ColorsScheme.secondaryTextColor,
+                                      ),
+                                    ),
+                                    iconColor: ColorsScheme.primaryIconColor,
+                                    collapsedIconColor: ColorsScheme.primaryIconColor,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Active: ${data['isActive'] ?? true ? 'Yes' : 'No'}',
+                                              'Description:',
                                               style: TextStyle(
-                                                color: (data['isActive'] ?? true) 
-                                                    ? Colors.green 
-                                                    : Colors.red,
+                                                color: ColorsScheme.primaryTextColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
+                                            Text(
+                                              data['description'] ?? 'No description',
+                                              style: TextStyle(
+                                                color: ColorsScheme.secondaryTextColor,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Recommended Meals:',
+                                              style: TextStyle(
+                                                color: ColorsScheme.primaryTextColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            ...((data['recommendations'] as List?) ?? []).map((meal) {
+                                              return Text(
+                                                '• $meal',
+                                                style: TextStyle(
+                                                  color: ColorsScheme.secondaryTextColor,
+                                                ),
+                                              );
+                                            }).toList(),
+                                            const SizedBox(height: 16),
                                             Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                TextButton(
-                                                  onPressed: () => _toggleRuleStatus(doc.id, !(data['isActive'] ?? true)),
-                                                  child: Text(
-                                                    (data['isActive'] ?? true) ? 'Disable' : 'Enable',
-                                                    style: TextStyle(color: ColorsScheme.primaryIconColor),
+                                                Text(
+                                                  'Active: ${data['isActive'] ?? true ? 'Yes' : 'No'}',
+                                                  style: TextStyle(
+                                                    color: (data['isActive'] ?? true)
+                                                        ? Colors.green
+                                                        : Colors.red,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                TextButton(
-                                                  onPressed: () => _deleteAIRule(doc.id),
-                                                  child: Text(
-                                                    'Delete',
-                                                    style: TextStyle(color: Colors.red[400]),
-                                                  ),
+                                                Row(
+                                                  children: [
+                                                    TextButton(
+                                                      onPressed: () => _toggleRuleStatus(doc.id, !(data['isActive'] ?? true)),
+                                                      child: Text(
+                                                        (data['isActive'] ?? true) ? 'Disable' : 'Enable',
+                                                        style: TextStyle(color: ColorsScheme.primaryIconColor),
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => _deleteAIRule(doc.id),
+                                                      child: Text(
+                                                        'Delete',
+                                                        style: TextStyle(color: Colors.red[400]),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                    ),
-                ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
+        ),
       ),
     );
   }

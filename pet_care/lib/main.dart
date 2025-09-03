@@ -8,6 +8,7 @@ import 'package:pet_care/CredentialsScreen/phoneAuthentication.dart';
 import 'package:pet_care/firebase_options.dart';
 import 'package:pet_care/services/notification_service.dart';
 import 'package:pet_care/services/subscription_automation_service.dart';
+import 'package:pet_care/debug/ios_auth_debug_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -101,6 +102,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => SplashScreen(),
         'Forgot Screen': (context) => ResetPassword(),
+        'Debug': (context) => IOSAuthDebugScreen(),
         // 'PhoneAuthenticate': (context) => PhoneAuthentication(
         //       userData: userData,
         //     ),

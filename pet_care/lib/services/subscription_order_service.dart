@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SubscriptionOrderService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   /// Creates the first immediate order when subscription is approved
   /// Marks it as Urgent with no due date
@@ -227,6 +229,13 @@ class SubscriptionOrderService {
   /// Updates order priority to critical when due date is reached
   static Future<void> updateOrdersToCritical() async {
     try {
+      // Check if user is authenticated
+      User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        print('No authenticated user for updating orders to critical');
+        return;
+      }
+
       DateTime now = DateTime.now();
       
       // Query orders that should become critical

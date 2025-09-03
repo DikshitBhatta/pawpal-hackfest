@@ -1,0 +1,85 @@
+// Recommended Firestore Security Rules for Pet Care App
+// Copy these rules to your Firebase Console -> Firestore Database -> Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // UserData collection - users can read/write their own data
+    match /UserData/{email} {
+      allow read, write: if request.auth != null && request.auth.token.email == email;
+    }
+    
+    // Allow users to read all user data (for admin dashboard functionality)
+    match /UserData/{document=**} {
+      allow read: if request.auth != null && 
+        exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
+        get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin';
+    }
+    
+    // Pet collections - users can access their own pet data
+    match /{email}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.token.email == email;
+    }
+    
+    // Subscriptions - users can access their own subscriptions, admins can access all
+    match /subscriptions/{document} {
+      allow read, write: if request.auth != null && 
+        (resource.data.userEmail == request.auth.token.email || 
+         request.data.userEmail == request.auth.token.email ||
+         (exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
+          get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin'));
+    }
+    
+    // Orders - users can access their own orders, admins can access all, automation system can update
+    match /orders/{document} {
+      allow read, write: if request.auth != null && 
+        (resource.data.userEmail == request.auth.token.email || 
+         request.data.userEmail == request.auth.token.email ||
+         (exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
+          get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin'));
+      
+      // Special rule for automation updates - allow updates to specific fields by authenticated users
+      allow update: if request.auth != null && 
+        request.writeFields.hasOnly(['status', 'priority', 'nextOrderScheduled', 'nextOrderId', 'nextOrderCreatedAt', 'deliveredAt', 'preparationStartedAt', 'preparationCompletedAt', 'readyForDeliveryAt', 'dispatchedAt']);
+    }
+    
+    // Messages/Community posts - authenticated users can read/write
+    match /messages/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Ingredients - allow read access to all authenticated users
+    match /ingredients/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
+        get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin';
+    }
+    
+    // Products/Inventory - allow read access to all authenticated users
+    match /products/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
+        get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin';
+    }
+    
+    // Meals - users can access their own meals, admins can access all
+    match /meals/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Order Review - users can access their own order reviews, admins can access all
+    match /order_review/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Admin-only collections
+    match /admin/{document=**} {
+      allow read, write: if request.auth != null && 
+        exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
+        get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin';
+    }
+  }
+}
