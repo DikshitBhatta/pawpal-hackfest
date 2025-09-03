@@ -5,7 +5,7 @@
 [![Gemini AI](https://img.shields.io/badge/Gemini_AI-4285F4?style=for-the-badge&logo=google)](https://makersuite.google.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-> **VitaPaw** is a comprehensive AI-powered pet care application that provides personalized meal planning, health tracking, veterinary services, and subscription management for your beloved pets.
+> **VitaPaw** is a comprehensive AI-powered pet care application that provides personalized meal planning, health tracking, and subscription management for your beloved pets.
 
 ## 📱 App Overview
 
@@ -18,9 +18,6 @@ VitaPaw revolutionizes pet care by combining cutting-edge AI technology with com
 - 🔔 **Smart Notifications** - Reminders for feeding, medication, and vet appointments
 - 📸 **Pet Profile Management** - Comprehensive pet health and care tracking
 - 💳 **Subscription Management** - Automated billing and delivery scheduling
-- 🛒 **Pet Shop Integration** - Browse and purchase pet supplies
-- 👥 **Community Features** - Connect with other pet owners
-- 🏥 **Emergency Services** - Quick access to veterinary emergency contacts
 
 ### 🏗️ Architecture
 
@@ -28,7 +25,6 @@ VitaPaw revolutionizes pet care by combining cutting-edge AI technology with com
 - **Backend**: Firebase (Auth, Firestore, Storage, Functions, Messaging)
 - **AI Engine**: Google Gemini for personalized meal recommendations
 - **Maps**: Google Maps integration for location services
-- **Payments**: Stripe integration for secure transactions
 
 ## 🚀 Quick Start
 
@@ -145,10 +141,7 @@ pet_care/
 3. **Cloud Storage**
    - Create buckets for pet images and documents
    - Configure storage rules
-
-4. **Cloud Functions**
-   - Deploy AI meal planning functions
-   - Set up payment processing functions
+     
 
 ### Environment Variables
 
@@ -158,7 +151,6 @@ Create a `.env` file in the root directory:
 GOOGLE_MAPS_API_KEY=your_maps_api_key
 GEMINI_API_KEY=your_gemini_api_key
 OPENAI_API_KEY=your_openai_api_key
-STRIPE_PUBLISHABLE_KEY=your_stripe_key
 ```
 
 ## 🧪 Testing
@@ -216,13 +208,6 @@ firebase deploy
 - **User Authentication**: Secure authentication flow with multiple providers
 - **Data Encryption**: All sensitive data is encrypted in transit and at rest
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ### Development Guidelines
 
@@ -246,7 +231,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/DikshitBhatta/Pet-Care-App/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/DikshitBhatta/Pet-Care-App/discussions)
-- **Email**: dikshitbhatta@example.com
+- **Email**: dikshitbhatta2060@gmail.com
 
 ## 🔄 Version History
 
