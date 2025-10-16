@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -52,6 +53,7 @@ class addPetFormDark extends StatefulWidget {
 class _addPetFormDarkState extends State<addPetFormDark> {
   bool showSpinner = false;
   LatLng? _current;
+  StreamSubscription<LocationData>? _locationSubscription;
 
   DateTime date = DateTime.now();
 
@@ -224,20 +226,23 @@ class _addPetFormDarkState extends State<addPetFormDark> {
 
     // Now start location listener only if we have permission
     if (_permissionGuranted == PermissionStatus.granted) {
-      _locationController.onLocationChanged.listen((LocationData currentLocation) {
-        if (currentLocation.latitude != null && currentLocation.longitude != null) {
-          setState(() {
-            _current = LatLng(currentLocation.latitude!, currentLocation.longitude!);
-            print("Location : $_current");
-          });
+      _locationSubscription = _locationController.onLocationChanged.listen(
+        (LocationData currentLocation) {
+          if (currentLocation.latitude != null && currentLocation.longitude != null) {
+            setState(() {
+              _current = LatLng(currentLocation.latitude!, currentLocation.longitude!);
+              print("Location : $_current");
+            });
+          }
+        },
+        onError: (error) {
+          print("Location error: $error");
+          _showErrorDialog("Location Not Accessible",
+            "Unable to access your location. Please check your device settings.");
         }
-      }).onError((error) {
-        print("Location error: $error");
-        _showErrorDialog("Location Not Accessible", 
-          "Unable to access your location. Please check your device settings.");
-      });
+      );
     } else {
-      _showErrorDialog("Location Not Accessible", 
+      _showErrorDialog("Location Not Accessible",
         "Unable to access your location. Please check your device settings.");
     }
   }
@@ -964,5 +969,11 @@ class _addPetFormDarkState extends State<addPetFormDark> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    super.dispose();
   }
 }

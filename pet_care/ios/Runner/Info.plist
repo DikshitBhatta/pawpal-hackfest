@@ -41,14 +41,8 @@
   <string>$(IPHONEOS_DEPLOYMENT_TARGET)</string>
   <!-- Location Permissions -->
   <key>NSLocationWhenInUseUsageDescription</key>
-  <string>We use your location to show nearby vets, pet services, and help you find pet care facilities in your area.</string>
-  <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-  <string>We use your location in the background to provide location-based pet care features and emergency services.</string>
-  <!-- Background Modes -->
-  <key>UIBackgroundModes</key>
-  <array>
-    <string>location</string>
-  </array>
+  <string>We use your location to set your pet's location during registration and use for delivery services.</string>
+  <!-- Background location removed - not needed for this app -->
   
   <!-- Camera Permissions -->
   <key>NSCameraUsageDescription</key>

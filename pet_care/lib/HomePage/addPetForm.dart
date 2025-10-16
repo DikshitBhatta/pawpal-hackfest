@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -23,6 +24,7 @@ class addPetForm extends StatefulWidget {
 class _addPetFormState extends State<addPetForm> {
   bool showSpinner = false;
   LatLng? _current;
+  StreamSubscription<LocationData>? _locationSubscription;
 
   PlatformFile? pickedFile;
   DateTime date = DateTime.now();
@@ -199,7 +201,7 @@ class _addPetFormState extends State<addPetForm> {
 
     // Check if we have permission (either already granted or just granted)
     if (_permissionGuranted == PermissionStatus.granted) {
-      _locationController.onLocationChanged
+      _locationSubscription = _locationController.onLocationChanged
           .listen((LocationData currentLocation) {
         if (currentLocation.latitude != null &&
             currentLocation.longitude != null) {
@@ -559,5 +561,11 @@ class _addPetFormState extends State<addPetForm> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    super.dispose();
   }
 }

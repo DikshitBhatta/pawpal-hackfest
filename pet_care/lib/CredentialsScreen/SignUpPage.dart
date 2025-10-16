@@ -211,9 +211,8 @@ class _SignUpFormState extends State<SignUpForm> {
   if (Name.isEmpty ||
     Email.isEmpty ||
     Password.isEmpty ||
-    ConfirmPassword.isEmpty ||
-    City.isEmpty) {
-      uiHelper.customAlertBox(() {}, context, "Please Fill All Fields!");
+    ConfirmPassword.isEmpty) {
+      uiHelper.customAlertBox(() {}, context, "Please Fill All Required Fields!");
       return;
     } else if (Name.contains(NameRejex)) {
       uiHelper.customAlertBox(
@@ -230,11 +229,8 @@ class _SignUpFormState extends State<SignUpForm> {
       uiHelper.customAlertBox(() {}, context,
           "Password Must Contains at Least One Lower Case, Upper Case, Digit, 8 Letters Length");
       return;
-    } else if (City.contains(NameRejex)) {
-      uiHelper.customAlertBox(
-          () {}, context, "City Not Valid. Must Not Contains Numbers!");
-      return;
     }
+    // City validation removed - City is now optional
     // Image is now optional - we'll use a default placeholder
     // No need to check for image as we use a default one
 
@@ -243,14 +239,20 @@ class _SignUpFormState extends State<SignUpForm> {
       "Name": Name,
       "Email": Email,
       "Password": Password,
-      "City": City,
-      "DateOfBirth": DateOfBirthController,
       "Pic": "assets/images/petPic.png", // Will be updated in signUP method if image is picked
       "isVerified": false,
       "role": "user", // Default role for new users
       "LAT": 31.5607552, // Default coordinates for Lahore, Pakistan
       "LONG": 74.378948
     };
+
+    // Add optional fields if provided
+    if (City.isNotEmpty) {
+      userData["City"] = City;
+    }
+    if (DateOfBirthController.isNotEmpty) {
+      userData["DateOfBirth"] = DateOfBirthController;
+    }
 
     // Call signup function
     signUP(userData);
@@ -312,7 +314,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String? cityValidator(value) {
     if (value.isEmpty) {
-      return ("PLease Enter City");
+      return null; // City is now optional
     }
     final RegExp NameRejex = RegExp(r'\d');
     if (value.contains(NameRejex)) {
@@ -323,7 +325,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String? dateOfBirthValidator(value) {
     if (DateOfBirthController == "") {
-      return ("PLease Enter Date of  birth");
+      return null; // Date of Birth is now optional
     }
 
     return null; // Image is now optional, so no need to check
