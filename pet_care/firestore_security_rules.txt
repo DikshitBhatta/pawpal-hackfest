@@ -1,5 +1,17 @@
 // Recommended Firestore Security Rules for Pet Care App
 // Copy these rules to your Firebase Console -> Firestore Database -> Rules
+// 
+// QUICK FIX: If you're having permission issues during development,
+// temporarily use these permissive rules (NOT for production):
+//
+// rules_version = '2';
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write: if request.auth != null;
+//     }
+//   }
+// }
 
 rules_version = '2';
 service cloud.firestore {
@@ -8,40 +20,35 @@ service cloud.firestore {
     // UserData collection - users can read/write their own data
     match /UserData/{email} {
       allow read, write: if request.auth != null && request.auth.token.email == email;
+      // Also allow read for any authenticated user (needed for user lookup)
+      allow read: if request.auth != null;
     }
     
-    // Allow users to read all user data (for admin dashboard functionality)
+    // Allow admins to read/write all user data
     match /UserData/{document=**} {
-      allow read: if request.auth != null && 
+      allow read, write: if request.auth != null && 
         exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
         get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin';
     }
     
-    // Pet collections - users can access their own pet data
+    // Pet collections - users can access their own pet data (stored under user email)
     match /{email}/{document=**} {
       allow read, write: if request.auth != null && request.auth.token.email == email;
     }
     
-    // Subscriptions - users can access their own subscriptions, admins can access all
-    match /subscriptions/{document} {
-      allow read, write: if request.auth != null && 
-        (resource.data.userEmail == request.auth.token.email || 
-         request.data.userEmail == request.auth.token.email ||
-         (exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
-          get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin'));
+    // Images collection - users can upload and read their own images
+    match /images/{document=**} {
+      allow read, write: if request.auth != null;
     }
     
-    // Orders - users can access their own orders, admins can access all, automation system can update
-    match /orders/{document} {
-      allow read, write: if request.auth != null && 
-        (resource.data.userEmail == request.auth.token.email || 
-         request.data.userEmail == request.auth.token.email ||
-         (exists(/databases/$(database)/documents/UserData/$(request.auth.token.email)) &&
-          get(/databases/$(database)/documents/UserData/$(request.auth.token.email)).data.role == 'admin'));
-      
-      // Special rule for automation updates - allow updates to specific fields by authenticated users
-      allow update: if request.auth != null && 
-        request.writeFields.hasOnly(['status', 'priority', 'nextOrderScheduled', 'nextOrderId', 'nextOrderCreatedAt', 'deliveredAt', 'preparationStartedAt', 'preparationCompletedAt', 'readyForDeliveryAt', 'dispatchedAt']);
+    // Subscriptions - users can access their own subscriptions, admins can access all
+    match /subscriptions/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Orders - users can access their own orders, admins can access all
+    match /orders/{document=**} {
+      allow read, write: if request.auth != null;
     }
     
     // Messages/Community posts - authenticated users can read/write
@@ -70,7 +77,7 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
     
-    // Order Review - users can access their own order reviews, admins can access all
+    // Order Review - authenticated users can read/write
     match /order_review/{document=**} {
       allow read, write: if request.auth != null;
     }

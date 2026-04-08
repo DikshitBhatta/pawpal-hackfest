@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:firebase_storage/firebase_storage.dart'; // Removed for MVP
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -37,7 +38,8 @@ class _addPetFormState extends State<addPetForm> {
   String dateOfBirthController = "";
   String dropdownvalue = 'Dog'; // Default to Dog since this is a dog-only app
   File? pickedImage;
-  String selectedCategory = "Dog", errorMessage = ""; // Always Dog since this is a dog-only app
+  String selectedCategory = "Dog",
+      errorMessage = ""; // Always Dog since this is a dog-only app
   bool isImageUpload = false,
       isMedicalFileUploaded = false,
       isDateOfBirthSelected = false,
@@ -174,47 +176,74 @@ class _addPetFormState extends State<addPetForm> {
   }
 
   Future<void> getLocationUpdates() async {
+    // Skip location service on web - use default coordinates
+    if (kIsWeb) {
+      setState(() {
+        // Default coordinates for Lahore, Pakistan
+        _current = const LatLng(31.5607552, 74.378948);
+        print("Web platform detected - using default location: $_current");
+      });
+      return;
+    }
+    
     Location _locationController = Location();
 
     bool _serviceEnabled;
     PermissionStatus _permissionGuranted;
 
-    _serviceEnabled = await _locationController.serviceEnabled();
+    try {
+      _serviceEnabled = await _locationController.serviceEnabled();
 
-    if (!_serviceEnabled) {
-      _serviceEnabled = await _locationController.requestService();
       if (!_serviceEnabled) {
-        uiHelper.customAlertBox(() {}, context, "Location Service Not Available");
-        return;
-      }
-    }
-
-    _permissionGuranted = await _locationController.hasPermission();
-
-    if (_permissionGuranted == PermissionStatus.denied) {
-      _permissionGuranted = await _locationController.requestPermission();
-      if (_permissionGuranted != PermissionStatus.granted) {
-        uiHelper.customAlertBox(() {}, context, "Location Permission Denied");
-        return;
-      }
-    }
-
-    // Check if we have permission (either already granted or just granted)
-    if (_permissionGuranted == PermissionStatus.granted) {
-      _locationSubscription = _locationController.onLocationChanged
-          .listen((LocationData currentLocation) {
-        if (currentLocation.latitude != null &&
-            currentLocation.longitude != null) {
+        _serviceEnabled = await _locationController.requestService();
+        if (!_serviceEnabled) {
           setState(() {
-            _current =
-                LatLng(currentLocation.latitude!, currentLocation.longitude!);
-            print("Location : $_current");
+            _current = const LatLng(31.5607552, 74.378948);
           });
+          uiHelper.customAlertBox(
+              () {}, context, "Using default location");
+          return;
         }
+      }
+
+      _permissionGuranted = await _locationController.hasPermission();
+
+      if (_permissionGuranted == PermissionStatus.denied) {
+        _permissionGuranted = await _locationController.requestPermission();
+        if (_permissionGuranted != PermissionStatus.granted) {
+          setState(() {
+            _current = const LatLng(31.5607552, 74.378948);
+          });
+          uiHelper.customAlertBox(() {}, context, "Using default location");
+          return;
+        }
+      }
+
+      // Check if we have permission (either already granted or just granted)
+      if (_permissionGuranted == PermissionStatus.granted) {
+        _locationSubscription = _locationController.onLocationChanged
+            .listen((LocationData currentLocation) {
+          if (currentLocation.latitude != null &&
+              currentLocation.longitude != null) {
+            setState(() {
+              _current =
+                  LatLng(currentLocation.latitude!, currentLocation.longitude!);
+              print("Location : $_current");
+            });
+          }
+        });
+      } else {
+        setState(() {
+          _current = const LatLng(31.5607552, 74.378948);
+        });
+        uiHelper.customAlertBox(() {}, context, "Using default location");
+      }
+    } catch (e) {
+      print("Error getting location: $e");
+      setState(() {
+        _current = const LatLng(31.5607552, 74.378948);
       });
-    } else {
-      // This should only happen if permission is denied or other non-granted status
-      uiHelper.customAlertBox(() {}, context, "Location Not Accessible");
+    }
     }
   }
 
